@@ -27,12 +27,24 @@ make_jarvis_env() {
     pip install "${JARVIS_ROOT}/jarvis_cmd" >/dev/null
 }
 
+log() {
+    echo "[ "
+    echo -n $(date)
+    echo " ] $1" >> $HOME/jarvis_log
+}
+
+# print and log
+print() {
+    log $1
+    echo $1
+}
+
 if [ ! -d "${MROVER_BUILD_ROOT}" ]; then
-    echo -n "Bootstrapping..."
+    print "Bootstrapping..."
     # Make MRover Build Root
     mkdir -p "${MROVER_BUILD_ROOT}"
     make_jarvis_env
-    echo "Done!"
+    print "Done!"
 fi
 
 if [ "$#" -lt 1 ]; then
@@ -43,6 +55,7 @@ fi
 if [ "$1" = "implode" ]; then
     # Delete mrover build space
     rm -rf "${MROVER_BUILD_ROOT}"
+    print "Imploded"
     exit 0
 fi
 
@@ -62,7 +75,7 @@ if [ "$1" = "exec" ]; then
         shift
         exec env LD_LIBRARY_PATH="${PRODUCT_ENV}/lib:${PRODUCT_ENV}/lib/x86_64-linux-gnu" "$@"
     else
-        echo "You must build something in order to be able to exec a command."
+        print "You must build something in order to be able to exec a command."
     fi
     exit 0
 fi
