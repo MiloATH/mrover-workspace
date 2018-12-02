@@ -54,17 +54,22 @@ fi
 
 if [ "$1" = "implode" ]; then
     # Delete mrover build space
+    log "Attempting to implode"
     rm -rf "${MROVER_BUILD_ROOT}"
     print "Imploded"
     exit 0
 fi
 
 if [ "$1" = "upgrade" ]; then
+    log "upgrading"
     # Delete Jarvis env and rebuild it
     # shellcheck source=/dev/null
     source "${JARVIS_VENV}/bin/activate"
+    log "Jarvis env activated"
     pip install -r "${JARVIS_ROOT}/requirements.txt" >/dev/null
+    log "Requirements installed"
     pip install --upgrade "${JARVIS_ROOT}/jarvis_cmd" >/dev/null
+    log "jarvis_cmd upgraded"
     exit 0
 fi
 
@@ -72,6 +77,7 @@ if [ "$1" = "exec" ]; then
     if [ -d "${PRODUCT_ENV}" ]; then
         # shellcheck source=/dev/null
         source "${PRODUCT_ENV}/bin/activate"
+        log "Prod env activated"
         shift
         exec env LD_LIBRARY_PATH="${PRODUCT_ENV}/lib:${PRODUCT_ENV}/lib/x86_64-linux-gnu" "$@"
     else
